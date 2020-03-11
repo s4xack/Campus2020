@@ -32,9 +32,13 @@ namespace BowlingGame
         private void UpdateScore(int pins)
         {
             CountSpareBonus(pins);
-            CountStrikeeBonus(pins);
-            frameSum += pins;
-            score += pins;
+            CountStrikeBonus(pins);
+            if (frameCount < 10)
+            {
+                frameSum += pins;
+                score += pins;
+            }
+
             CheckPins(pins);
         }
         private void CheckPins(int pins)
@@ -54,7 +58,7 @@ namespace BowlingGame
             }
         }
 
-        private void CountStrikeeBonus(int pins)
+        private void CountStrikeBonus(int pins)
         {
             if (strikeCount > 0)
             {
@@ -211,7 +215,7 @@ namespace BowlingGame
             game.Roll(10);
             game.Roll(10);
 
-            game.GetScore().Should().Be(78);
+            game.GetScore().Should().Be(48);
 
         }
         [Test]
@@ -238,7 +242,7 @@ namespace BowlingGame
             game.Roll(5);
             game.Roll(5);
             game.Roll(10);
-            game.GetScore().Should().Be(48);
+            game.GetScore().Should().Be(38);
         }
 
         [Test]
@@ -270,7 +274,19 @@ namespace BowlingGame
             {
                 game.Roll(10);
             }
-            game.GetScore().Should().Be(330);
+            game.GetScore().Should().Be(300);
+        }
+
+        [Test]
+        public void StupidTestFromMax()
+        {
+            game.Roll(10);
+            game.Roll(5);
+            game.Roll(5);
+            game.Roll(5);
+
+            game.GetScore().Should().Be(40);
+
         }
     }
 }
