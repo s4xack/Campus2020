@@ -219,7 +219,7 @@ namespace BowlingGame
 
         }
         [Test]
-        public void TwoStrikesAndOneRollAfterLastFrameStrike_ShouldThrowException()
+        public void RollAfterGameOver_ShouldThrowException()
         {
             for(int i = 0; i < 18; i++)
             {
