@@ -20,7 +20,7 @@ namespace BowlingGame
 
         public void Roll(int pins)
         {
-            if(frameCount == 10)
+            if(frameCount >= 10 && strikeCount == 0 && !spare)
             {
                 throw new NotSupportedException();
             }
@@ -35,6 +35,14 @@ namespace BowlingGame
             CountStrikeeBonus(pins);
             frameSum += pins;
             score += pins;
+            CheckPins(pins);
+        }
+        private void CheckPins(int pins)
+        { 
+            if (pins < 0 || pins > 10 || frameSum > 10)
+            {
+                throw new ArgumentException();
+            }
         }
 
         private void CountSpareBonus(int pins)
@@ -62,11 +70,6 @@ namespace BowlingGame
 
         private  void UpdateFrame()
         {
-            if (frameSum > 10)
-            {
-                throw new ArgumentException("too many");
-            }
-
             CheckSpare();
             CheckStrike();
 
@@ -96,7 +99,8 @@ namespace BowlingGame
             {
                 if (strikeCount > 0)
                     doubleStrike = true;
-                strikeCount = 2;
+                if (frameCount < 10)
+                    strikeCount = 2;
             }
         }
 
@@ -159,7 +163,7 @@ namespace BowlingGame
             game.GetScore().Should().Be(11);
         }
         [Test]
-        public void SpareAndOneRoll()
+        public void SpareAndOneRoll_ShouldAddDoublePointsForRoll()
         {
             game.Roll(7);
             game.Roll(3);
@@ -167,7 +171,7 @@ namespace BowlingGame
             game.GetScore().Should().Be(20);
         }
         [Test]
-        public void StrikeAndOneRoll()
+        public void StrikeAndTwoRolls_ShouldAddDoublePointsForRolls()
         {
             game.Roll(10);
             game.Roll(3);
@@ -176,7 +180,7 @@ namespace BowlingGame
         }
 
         [Test]
-        public void TripleStrike()
+        public void TripleStrike_ShouldWorkCorrect()
         {
             game.Roll(10);
             game.Roll(10);
@@ -184,7 +188,7 @@ namespace BowlingGame
             game.GetScore().Should().Be(60);
         }
         [Test]
-        public void RollAutoFrames()
+        public void RollAfterTenFrames_ShouldThrowException()
         {
             for(int i = 0; i < 9; i++)
             {
@@ -196,10 +200,77 @@ namespace BowlingGame
             a.ShouldThrow<NotSupportedException>();
         
         }
-        /*[Test]
-        public void LastFrameStrike()
+        [Test]
+        public void TwoStrikesAfterLastFrameStrike_ShouldWorkCorrect()
         {
+            for(int i = 0; i < 18; i++)
+            {
+                game.Roll(1);
+            }
+            game.Roll(10);
+            game.Roll(10);
+            game.Roll(10);
 
-        }*/
+            game.GetScore().Should().Be(78);
+
+        }
+        [Test]
+        public void TwoStrikesAndOneRollAfterLastFrameStrike_ShouldThrowException()
+        {
+            for(int i = 0; i < 18; i++)
+            {
+                game.Roll(1);
+            }
+            game.Roll(10);
+            game.Roll(10);
+            game.Roll(10);
+            Action a = () => game.Roll(10);
+            a.ShouldThrow<NotSupportedException>();
+
+        }
+        [Test]
+        public void OneRollAfterLastFrameSpare_ShouldWorkCorrect()
+        {
+            for(int i = 0; i < 18; i++)
+            {
+                game.Roll(1);
+            }
+            game.Roll(5);
+            game.Roll(5);
+            game.Roll(10);
+            game.GetScore().Should().Be(48);
+        }
+
+        [Test]
+        public void TwoRollsAfterLastFrameSpare_ShouldThrowException()
+        {
+            for (int i = 0; i < 18; i++)
+            {
+                game.Roll(1);
+            }
+            game.Roll(5);
+            game.Roll(5);
+            game.Roll(1);
+            Action a = () => game.Roll(1);
+            a.ShouldThrow<NotSupportedException>();
+            
+        }
+
+        [Test]
+        public void NegativeRoll_ShouldThrowException()
+        {
+            Action a = () => game.Roll(-1);
+            a.ShouldThrow<ArgumentException>();
+        }
+
+        [Test]
+        public void AllStrikes_ShouldReturnMaxScore()
+        {
+            for (int i = 0; i < 12; ++i)
+            {
+                game.Roll(10);
+            }
+            game.GetScore().Should().Be(330);
+        }
     }
 }
