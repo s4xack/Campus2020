@@ -1,58 +1,108 @@
-﻿namespace Chess
+﻿using System;
+using System.Linq;
+
+namespace Chess
 {
     public class ChessProblem
     {
-        private static Board board;
-        public static ChessStatus ChessStatus;
+        private Board board;
+        public ChessStatus ChessStatus;
 
-        public static void LoadFrom(string[] lines)
+        public void LoadFrom(Board board)
         {
-            board = new BoardParser().ParseBoard(lines);
+            this.board = board;
         }
 
-        // Определяет мат, шах или пат белым.
-        public static void CalculateChessStatus()
+        public void CalculateChessStatus(PieceColor color)
         {
-            var isCheck = IsCheckForWhite();
-            var hasMoves = false;
-            foreach (var locFrom in board.GetPieces(PieceColor.White))
-            {
-                foreach (var locTo in board.GetPiece(locFrom).GetMoves(locFrom, board))
-                {
-                    var old = board.GetPiece(locTo);
-                    board.Set(locTo, board.GetPiece(locFrom));
-                    board.Set(locFrom, null);
-                    if (!IsCheckForWhite())
-                        hasMoves = true;
-                    board.Set(locFrom, board.GetPiece(locTo));
-                    board.Set(locTo, old);
-                }
-            }
+            var isCheck = IsCheck(color); 
+            var hasMoves = HasMoves(color);
             if (isCheck)
-                if (hasMoves)
-                    ChessStatus = ChessStatus.Check;
-                else ChessStatus = ChessStatus.Mate;
-            else if (hasMoves) ChessStatus = ChessStatus.Ok;
-            else ChessStatus = ChessStatus.Stalemate;
+                ChessStatus = hasMoves ? ChessStatus.Check : ChessStatus.Mate;
+            else 
+                ChessStatus = hasMoves ? ChessStatus.Ok : ChessStatus.Stalemate;
         }
 
-        // check — это шах
-        private static bool IsCheckForWhite()
+        private bool HasMoves(PieceColor color)
         {
-            var isCheck = false;
-            foreach (var loc in board.GetPieces(PieceColor.Black))
+            return board.
+                GetPieces(color)
+                .Any(HasMovesFrom);
+        }
+
+        private bool HasMovesFrom(Location locFrom)
+        {
+            return board
+                .GetPiece(locFrom)
+                .GetMoves(locFrom, board)
+                .Any(locTo => CanMoveTo(locTo, locFrom));
+        }
+
+        private bool CanMoveTo(Location locTo, Location locFrom)
+        {
+            var color = board.GetPiece(locFrom).Color;
+            using (var move = board.PerformTemporaryMove(locFrom, locTo))
             {
-                var piece = board.GetPiece(loc);
-                var moves = piece.GetMoves(loc, board);
-                foreach (var destination in moves)
-                {
-                    if (Piece.Is(board.GetPiece(destination),
-                                 PieceColor.White, PieceType.King))
-                        isCheck = true;
-                }
+                return !IsCheck(color);
             }
-            if (isCheck) return true;
-            return false;
+        }
+
+        private bool IsCheck(PieceColor color)
+        {
+            var enemyColor = GetEnemyColor(color);
+            return board.GetPieces(enemyColor).Any(CanAttackKing);
+        }
+
+        private PieceColor GetEnemyColor(PieceColor color)
+        {
+            return color == PieceColor.White ? PieceColor.Black : PieceColor.White;
+        }
+
+        private bool CanAttackKing(Location loc)
+        {
+            var piece = board.GetPiece(loc);
+            var color = GetEnemyColor(piece);
+            var moves = piece.GetMoves(loc, board);
+            return moves.Any(destination => 
+                Piece.Is(board.GetPiece(destination), color, PieceType.King));
+        }
+
+        private PieceColor GetEnemyColor(Piece piece)
+        {
+            return piece.Color == PieceColor.White ? PieceColor.Black : PieceColor.White;
+        }
+
+
+    }
+
+    class Dick : IDisposable
+    {
+        public static Dick MaxValue()
+        {
+            return new Dick();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendPhoto(string to)
+        {
+            
         }
     }
+
+    class Prog
+    {
+        void Main()
+        {
+            using (var dick = Dick.MaxValue())
+            {
+                dick.SendPhoto("Lera");
+            }
+        }
+    }
+
+
 }
