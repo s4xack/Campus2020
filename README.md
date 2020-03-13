@@ -1,6 +1,6 @@
 # Campus
 
-Здесь собраные материалы и задания с «Кампуса» 2020
+Здесь собраные материалы с «Кампус» 2020
 
 1. [Git](https://github.com/s4xack/Campus2020/tree/master/git)
 2. [Тестирование](https://github.com/s4xack/Campus2020/tree/master/testing)
