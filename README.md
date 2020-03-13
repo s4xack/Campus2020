@@ -1,5 +1,10 @@
 # Campus
 
-Здесь собраные материалы и задания с "Кампуса" 2020
+Здесь собраные материалы и задания с «Кампуса» 2020
 
-> TODO: place menu here
+1. [Git](https://github.com/s4xack/Campus2020/tree/master/git)
+2. [Тестирование](https://github.com/s4xack/Campus2020/tree/master/testing)
+3. [Test Driven Development](https://github.com/s4xack/Campus2020/tree/master/tdd)
+4. [Чистый код](https://github.com/s4xack/Campus2020/tree/master/clean-code)
+5. [Dependency Injection Container](https://github.com/s4xack/Campus2020/tree/master/di)
+6. [Mocks](https://github.com/s4xack/Campus2020/tree/master/di)
