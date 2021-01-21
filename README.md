@@ -7,4 +7,4 @@
 3. [Test Driven Development](https://github.com/s4xack/Campus2020/tree/master/tdd)
 4. [Чистый код](https://github.com/s4xack/Campus2020/tree/master/clean-code)
 5. [Dependency Injection Container](https://github.com/s4xack/Campus2020/tree/master/di)
-6. [Mocks](https://github.com/s4xack/Campus2020/tree/master/di)
+6. [Mocks](https://github.com/s4xack/Campus2020/tree/master/mocks)
